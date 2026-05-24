@@ -1,0 +1,18 @@
+{
+  "autoUpdatesChannel": "latest",
+  "theme": "dark",
+  "effortLevel": "high",
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"C:\\Users\\OfekPass\\.claude\\backup.ps1\""
+          }
+        ]
+      }
+    ]
+  }
+}

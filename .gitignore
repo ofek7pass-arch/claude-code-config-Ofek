@@ -1,0 +1,22 @@
+# Sensitive - never backup
+.credentials.json
+
+# Ephemeral - no value in backup
+sessions/
+cache/
+telemetry/
+file-history/
+backups/
+downloads/
+history.jsonl
+.last-cleanup
+ide/
+shell-snapshots/
+
+# Project session files (contain conversation history + secrets)
+projects/**/*.jsonl
+projects/**/*.jsonl.tmp
+projects/*/tool-results/
+
+# Git itself
+.git/

@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "Edit",
+      "Write",
+      "Task",
+      "TodoWrite",
+      "WebFetch",
+      "WebSearch",
+      "PowerShell(*)"
+    ]
+  }
+}
