@@ -1,78 +1,78 @@
 # RTL Fix for Claude Code VS Code Extension
 
-## רקע טכני (לשימוש פנימי - לא להציג למשתמש אלא אם שואל)
-
-תוסף ה-RTL עובד על ידי הזרקת קוד JavaScript לסוף הקובץ `webview/index.js` של תוסף Claude Code.
-הבעיה: כשקלוד קוד מתעדכן לגרסה חדשה, הקובץ מוחלף בנקי - וההזרקה נעלמת.
-בנוסף, ה-CSS class names של Claude Code הם minified ומשתנים בין גרסאות - לכן צריך לסרוק ולעדכן אותם.
-
-## איך לנהל את השיחה
 שפה: עברית תמיד.
 
-### עיקרון מרכזי: אבחן → תקן → דווח
-כשהמשתמש מבקש "תקן RTL" - פשוט תתקן. לא לשאול אישור להתקנה עצמה.
+## מה לעשות — זה כל התהליך
 
-### שלב 1: אבחון (שקט, אוטומטי)
-1. בדוק אילו גרסאות Claude Code קיימות ב-`~/.vscode/extensions/anthropic.claude-code-*/`
-2. בדוק באילו מהן RTL כבר מותקן (חפש הזרקה ב-`webview/index.js`)
-3. המשך ישירות לביצוע
+הרץ את הסקריפט. אל תגזור CSS מחדש, אל תסרוק class names, אל תזריק JavaScript.
 
-### שלב 2: סריקת תאימות סלקטורים (חובה!)
-חובה בכל הרצה — סרוק את ה-class names הנוכחיים של Claude Code ב-CSS.
-חלץ: message, userMessageContainer, timelineMessage, userMessage ועוד.
-השווה עם הסקריפט הקיים. עדכן אם השתנו.
-
-### שלב 3: ביצוע (אוטומטי)
-הזרק את קוד ה-RTL לקובץ `webview/index.js` של כל גרסה פעילה.
-גבה לפני שינוי.
-
-### שלב 4: דיווח (תמיד בסוף)
-מה נמצא, מה תוקן, שינויי סלקטורים, הצורך ב-Reload Window ב-VS Code.
-
-## קוד RTL להזרקה
-
-```javascript
-// RTL Fix for Claude Code VS Code Extension
-(function() {
-  'use strict';
-
-  const RTL_STYLE = `
-    [class*="message"], [class*="userMessage"], [class*="assistantMessage"],
-    [class*="timelineMessage"], [class*="content"] {
-      direction: rtl !important;
-      text-align: right !important;
-      unicode-bidi: plaintext !important;
-    }
-
-    [class*="userMessage"] {
-      direction: rtl !important;
-    }
-
-    code, pre, [class*="code"] {
-      direction: ltr !important;
-      text-align: left !important;
-    }
-  `;
-
-  function injectRTL() {
-    if (document.getElementById('rtl-fix-style')) return;
-    const style = document.createElement('style');
-    style.id = 'rtl-fix-style';
-    style.textContent = RTL_STYLE;
-    document.head.appendChild(style);
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', injectRTL);
-  } else {
-    injectRTL();
-  }
-
-  const observer = new MutationObserver(injectRTL);
-  observer.observe(document.documentElement, { childList: true, subtree: true });
-})();
+```powershell
+powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\.claude\scripts\rtl-fix.ps1"
 ```
 
-## הערה חשובה
-לאחר הזרקה — הנחה את המשתמש לבצע Reload Window ב-VS Code:
-`Ctrl+Shift+P` → "Developer: Reload Window"
+אמת ש-`applied=True` ושהסוגריים מאוזנים בפלט, ואז דווח למשתמש להריץ:
+`Ctrl+Shift+P` → **Developer: Reload Window**
+
+ביטול: אותה פקודה עם `-Revert`.
+
+הסקריפט אידמפוטנטי (בלוק מסומן `/* == RTL-FIX START == */`), מגבה פעם אחת ל-`index.css.rtl-backup`, מטפל בכל הגרסאות המותקנות תחת `~/.vscode/extensions/anthropic.claude-code-*`, ומדפיס `applied / blocks / braces / size`.
+
+תיעוד מלא: `~/.claude/scripts/RTL-FIX-README.md`
+
+## אחרי עדכון גרסה של Claude Code
+
+העדכון מביא `index.css` נקי וההוספה נעלמת. הפתרון הוא להריץ את הסקריפט שוב — **בלי** סריקת סלקטורים. הסלקטורים חסינים ל-hash ולכן שורדים עדכונים.
+
+---
+
+## המלכודות — אל תחזור עליהן
+
+התיעוד נכתב אחרי שיחה שבזבזה שעה על ניחושים, שלושה סבבי CSS שגוי ודיווחי הצלחה בלי אימות.
+
+### 1. התיבה בנויה משתי שכבות — זה היה השורש
+`.messageInput_*` הוא contenteditable **שקוף**: `color:#0000`, רק `caret-color` נראה.
+הטקסט שהמשתמש רואה מרונדר ב-`.mentionMirror_*` — `position:absolute; inset:0; pointer-events:none; color: var(--app-input-foreground)`.
+`direction: rtl` על `messageInput_` לבד מזיז את הקורסור ולא פיקסל מהטקסט הנראה. חייבים את **שתי** השכבות יחד.
+
+### 2. `text-align: start` הוא שמאל
+בבלוק שכיוונו `ltr`, `start` מתרגם לשמאל. `unicode-bidi: plaintext` מסדר אותיות בתוך השורה אבל **לא מיישר** — יישור נקבע ברמת הבלוק. אין יישור-לימין בלי `direction: rtl`. גישת "plaintext בלי direction" לא יכולה לעבוד.
+
+### 3. `direction: rtl` על מכל flex הופך את הפריסה
+כפתורים, אייקון המיקרופון וה-toolbar עוברים לצד ההפוך. להחיל `direction` רק על תגיות טקסט (`p`, `li`, כותרות, `blockquote`, `td`, `th`) ועל שכבות התיבה — לעולם לא על ה-div-ים שמחזיקים אותן.
+
+### 4. סלקטורים רחבים תופסים את Monaco
+`[class*="message"]` ו-`[class*="content"]` תופסים גם `monaco-hover-content`, `lines-content`, `sticky-line-content`, `quick-input-message`. יש 1479 class-ים ב-`index.css`. תמיד לכלול את הקו התחתון: `[class^="messagesContainer_"]`.
+
+### 5. `[class^=]` לבד מפספס אלמנטים מרובי-class
+`[class^="x_"]` תופס רק כשזה ה-class הראשון. צריך גם `[class*=" x_"]` עם רווח. הסקריפט מייצר את שני הווריאנטים אוטומטית, וזו הסיבה שאין צורך לסרוק hash-ים.
+
+### 6. PowerShell לא רגיש לרישיות
+אל תקרא למשתנה התוכן `$CSS` כשיש בלולאה `$css` עם נתיב הקובץ — השני דורס את הראשון בשקט והקובץ מקבל את הנתיב במקום את ה-CSS. באג אמיתי שקרה כאן. בסקריפט המשתנה נקרא `$RtlBlock`.
+
+### 7. `Select-String` משקר על קבצים מינופיים
+`index.js` הוא שורה אחת של ~5MB, ו-`Select-String` החזיר 0 התאמות למרות שהטקסט קיים. לאימות תמיד `[System.IO.File]::ReadAllText($f).Contains('...')`.
+
+---
+
+## ארכיטקטורה: CSS ולא JS
+
+הגישה הישנה של הסקיל הזה הזריקה JavaScript לסוף `webview/index.js`. **הוחלפה.**
+
+אומת ב-`extension.js` ש-`getHtmlForWebview` בונה את ה-HTML של פאנל הצ'אט כך:
+
+```
+Uri.joinPath(extensionUri,"webview","index.js")   -> <script nonce=...>
+Uri.joinPath(extensionUri,"webview","index.css")  -> <link rel="stylesheet">
+```
+
+CSP: `default-src 'none'; style-src <cspSource> 'unsafe-inline'; script-src 'nonce-...'; worker-src ...`
+
+`index.css` נטען ישירות כ-stylesheet, ולכן הוספה אליו לא תלויה בהרצת JS, ב-nonce, ב-CSP או בסדר טעינה.
+
+## מה לא לעשות
+
+- לא לשאול אישור להתקנה עצמה — לתקן.
+- לא להסתמך על `[class*="message"]` או `[class*="content"]`.
+- לא להזריק JS.
+- לא לדווח הצלחה בלי `applied=True` ואיזון סוגריים מפלט הסקריפט. אימות סטטי אינו אישור ויזואלי — לומר את זה במפורש.
+- אם אחרי Reload זה לא עובד: לבקש `Developer: Open Webview Developer Tools` → Elements עם שורת טקסט עברית מסומנת, במקום סבב ניחושים נוסף.
