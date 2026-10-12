@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 4bfca74a-912b-4319-b331-91e154611104
-  modified: 2026-10-12T08:12:37.751Z
+  modified: 2026-10-12T09:04:26.244Z
 ---
 
 ב-2026-10-12 אופק התחיל לצאת לשוק כעצמאי ומבקש דף נחיתה + מערכת לידים.
@@ -13,6 +13,10 @@ metadata:
 - מערכת לידים: טבלה עם מחיקה, סטטוס טקסט חופשי, אייקון וואטסאפ ואייקון מייל לכל ליד.
 - הוא ביקש במפורש לאתגר את האפיון ולא להיות "יס מן". הטיוטה של גוגל היא רק כיוון (עיצוב כהה עם glassmorphism), והמסרים בה נפסלו.
 - סקילים שביקש: ui-ux-pro-max, frontend-design, landing-page-copy, landing-page-copywriter, landing-page-guide-v2, landing-page-generator (הארבעה האחרונים הותקנו ב-~/.claude/skills).
+
+- סטטוס 2026-10-12: נבנה ב-C:\Users\OfekPass\ofek-landing (HTML סטטי בלי build, Apps Script לקליטה + Apps Script נפרד לניהול בהרשאת "Only myself", הוראות ב-SETUP.md). עוד לא נפרס: חסרים דומיין, Cloudflare Pages ו-GA ID.
+- תשובות שלו: לקוח אידיאלי = 1–20 עובדים ועמותות; תנועה מ-XPLACE ומפה לאוזן; מחיר קבוע ולא מציגים מחירים; היה שכיר, ולכן אין שמות חברות ואין המלצות.
+- על המחשב שלו אין Python ואין Node. צילומי מסך עובדים עם msedge --headless ופרופיל נפרד (--user-data-dir).
 
 **Why:** זה השלב הראשון שלו מול השוק, והוא מצפה לביקורת מקצועית על המסרים ולא רק לביצוע.
 **How to apply:** לא להמציא הוכחות חברתיות או מספרים. להציף פערים באפיון. קשור ל-[[working-style-ofek]].
