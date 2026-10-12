@@ -4,3 +4,4 @@
 - [RTL ל-Claude Code VS Code](rtl-fix-claude-code.md) — הרץ rtl-fix.ps1, אל תגזור CSS מחדש | התיבה דו-שכבתית, mentionMirror הוא הנראה
 - [סגנון עבודה מול אופק](working-style-ofek.md) — להריץ כלים קיימים לפני שכותבים חדש, ולא לדווח הצלחה בלי אימות
 - [כלי כוח אדם BioHarvest](project-bioharvest-workforce.md) — אקסל .xlsm ולא web כי המידע לא יוצא ממיקרוסופט | VBA דק בלי UserForms, 4 החלטות פיננסיות
+- [דף נחיתה לעסק העצמאי](project-landing-page.md) — דף נחיתה + מערכת לידים | לאתגר את האפיון, לא להמציא הוכחות חברתיות
