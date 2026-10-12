@@ -46,7 +46,7 @@ Per-feature toggles (all default enabled; set to "0" to disable):
 - ENABLE_COMMIT_REVIEW: PostToolUse[Bash] commit security review
 
 Other:
-- SECURITY_REVIEW_MODEL: Model for LLM review (default: claude-opus-4-7)
+- SECURITY_REVIEW_MODEL: Model for LLM review (default: the newest Opus)
 - ANTHROPIC_API_KEY: Required for LLM-based reviews
 - ANTHROPIC_AUTH_TOKEN: Alternative to API key — OAuth access token sent as Bearer auth.
   Claude Code passes this automatically for OAuth-authenticated users.
@@ -97,7 +97,7 @@ from session_state import (  # noqa: E402,F401
     load_state, save_state, with_locked_state,
 )
 from gitutil import (  # noqa: E402,F401
-    GIT_CMD, apply_safe_git_env,
+    GIT_CMD, apply_safe_git_env, remove_copies_on_termination,
     _git_rev_parse_head, _find_git_index, _diff_pathspec, _temp_index,
     _git_toplevel, _git_dir, _git_rev_list_range, _git_diff_range,
     _detect_main_branch, _git_reflog_recent_commits, _git_name_only,
@@ -2253,6 +2253,7 @@ def main():
     """Main hook function."""
     debug_log(f"Hook called with args: {sys.argv}")
     apply_safe_git_env()
+    remove_copies_on_termination()
 
     # Master kill switch — honors ENABLE_SECURITY_REMINDER=0 (legacy) and
     # SECURITY_GUIDANCE_DISABLE=1 (clearer name, no double negative). Emit
